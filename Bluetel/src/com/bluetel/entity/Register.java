@@ -9,11 +9,13 @@ import javax.persistence.ManyToOne;
 
 import org.hibernate.annotations.ForeignKey;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 public class Register
 {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
 	private String type;
@@ -23,6 +25,7 @@ public class Register
 	@ManyToOne
 	@JoinColumn(name = "idCustomer", nullable = false)
 	@ForeignKey(name = "customer_fk")
+    @JsonBackReference
 	private Customer customer;
 
 	public int getId() {

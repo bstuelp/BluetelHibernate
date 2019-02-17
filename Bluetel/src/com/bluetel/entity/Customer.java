@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -12,20 +13,23 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Customer implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int customerId;
 	private String serialNumber;
 	private String mpxn;
 	private String readDate;
 	
-	@OneToMany(mappedBy="customer", orphanRemoval=true)
+	@OneToMany(mappedBy="customer", orphanRemoval=true, fetch = FetchType.EAGER)
 	@Cascade(value=CascadeType.ALL)
+	@JsonManagedReference
 	private List<Register> register;
 
 	public int getCustomerId() {
