@@ -58,6 +58,7 @@ public class Service implements Serializable, Iservice
 	@Path("/store")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
+	@Override
 	public Response setMeterReaders(String json)
 	{
 		/*Valid JSON*/
@@ -70,21 +71,29 @@ public class Service implements Serializable, Iservice
 			/*Parse json -> Java Object (Customer)*/
 			Customer customer = this.parseJsonJavaObject(json);
 			
-			Configuration cfg = new Configuration();
-			cfg.configure("hibernate.cfg.xml");
-
-			Session session = cfg.buildSessionFactory().openSession();
-			Transaction t = session.beginTransaction();
-
-			session.save(customer);
-
-			t.commit();
-			session.close();
+			if (customer != null)
+			{
+				Configuration cfg = new Configuration();
+				cfg.configure("hibernate.cfg.xml");
+	
+				Session session = cfg.buildSessionFactory().openSession();
+				Transaction t = session.beginTransaction();
+	
+				session.save(customer);
+	
+				t.commit();
+				session.close();
+			}
+			else
+			{
+				return(Response.status(Response.Status.BAD_REQUEST).entity("Error Parse Json to Java Object!").build());
+			}
 		}
 
 		return(Response.status(Response.Status.OK).entity("Stored!").build());
 	}
 
+	@Override
 	public boolean validJson(String json)
 	{
 		Gson gson = new Gson();
@@ -101,6 +110,7 @@ public class Service implements Serializable, Iservice
 		}
 	}
 
+	@Override
 	public Customer parseJsonJavaObject(String strJson)
 	{
 		ObjectMapper mapper = new ObjectMapper();
@@ -120,15 +130,15 @@ public class Service implements Serializable, Iservice
 		}
 		catch (JsonGenerationException e)
 		{
-			e.printStackTrace();
+			return (null);
 		}
 		catch (JsonMappingException e)
 		{
-			e.printStackTrace();
+			return (null);
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			return (null);
 		}
 
 		return (customer);
